@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="dirColumns">3</integer>
+    <integer name="imgColumns">4</integer>
+    <integer name="lastDirSortingMethod">1</integer>
+    <integer name="lastImgSortingMethod">5</integer>
+
+    <integer name="daysBeforeDeleting">9999</integer>
+    <integer name="comparingPercentage">100</integer>
+    <integer name="matchingPercentage">100</integer>
+
+    <bool name="rotateWithGestures">false</bool>
+    <bool name="deleteAfterEmptying">false</bool>
+    <bool name="moveToBinBeforeDeleting">false</bool>
+    <bool name="perfectMatch">true</bool>
+
+    <integer name="themeUsed">1</integer>
+</resources>
