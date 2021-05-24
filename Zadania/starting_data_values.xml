@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- przykład
+	<"TYP" name="NAZWA_POD_KTÓRĄ_ZMIENNA_JEST_OSIĄGALNA">"WARTOŚĆ"</"TYP">
+	-->
+    <integer name="dirColumns"></integer>
+    <integer name="imgColumns"></integer>
+    <integer name="lastDirSortingMethod"></integer>
+    <integer name="lastImgSortingMethod"></integer>
+
+    <integer name="comparingPercentage"></integer>
+    <integer name="matchingPercentage"></integer>
+
+    <bool name="deleteAfterEmptying"></bool>
+    <bool name="perfectMatch"></bool>
+
+</resources>
