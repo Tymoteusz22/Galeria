@@ -14,7 +14,7 @@ public class Directory{
 
     public Directory(Path p){
         path = p.toString();
-        name = ; 													// tutaj przypisz nazwę folderu
+        name = path.substring(path.lastIndexOf("/")+1);
         this.selected = false;
         setSize();
     }

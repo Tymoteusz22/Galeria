@@ -1,8 +1,8 @@
 Aby umożliwić sortowanie folderów, w pliku Directory.java zaimplementuj dwa komparatory (po nazwie i rozmiarze - lub raczej ilości plików w folderze)
 W tym celu:
-1. W konstruktorze klasy Directory przypisz do zmiennej "name" [typ: String] nazwę folderu na podstawie ścieżki
-2. Do klasy Directory dodaj dwa komparatory porównujące zmienne "name" i "size"
-3. Zwróć uwagę na to, że zarówno nazwy jak i rozmiary mogą się powtarzać, w tym celu wewnątrz 'ogólnych' komparatorów dodaj dodatkowe warunki, pozwalające jak najdalej rozstrzygnąć kolejność
+
+1. Do klasy Directory dodaj dwa komparatory porównujące zmienne "name" i "size"
+2. Zwróć uwagę na to, że zarówno nazwy jak i rozmiary mogą się powtarzać, w tym celu wewnątrz 'ogólnych' komparatorów dodaj dodatkowe warunki, pozwalające jak najdalej rozstrzygnąć kolejność
 
 Przykład implementacji:
 https://www.baeldung.com/java-comparator-comparable#1-creating-comparators

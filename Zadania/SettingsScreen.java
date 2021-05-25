@@ -109,23 +109,14 @@ public class SettingsScreen extends AppCompatActivity {
     }
 
     private void getData(){
-        SharedPreferences sharedPreferences = getSharedPreferences(dataFilename, MODE_PRIVATE);
-        dirColumns = sharedPreferences.getInt("dirColumns", getResources().getInteger(R.integer.dirColumns));
-        imgColumns = sharedPreferences.getInt("imgColumns", getResources().getInteger(R.integer.imgColumns));
-
-        rotateWithGestures = sharedPreferences.getBoolean("rotateWithGestures",getResources().getBoolean(R.bool.rotateWithGestures));
-
-        deleteAfterEmptying = sharedPreferences.getBoolean("deleteAfterEmptying",getResources().getBoolean(R.bool.deleteAfterEmptying));
-        moveToBinBeforeDeleting = sharedPreferences.getBoolean("moveToBinBeforeDeleting",getResources().getBoolean(R.bool.moveToBinBeforeDeleting));
-        daysBeforeDeleting = sharedPreferences.getInt("daysBeforeDeleting",getResources().getInteger(R.integer.daysBeforeDeleting));
-
-        perfectMatch = sharedPreferences.getBoolean("perfectMatch",getResources().getBoolean(R.bool.perfectMatch));
-        matchingPercentage = sharedPreferences.getInt("matchingPercentage",getResources().getInteger(R.integer.matchingPercentage));
-        comparingPercentage = sharedPreferences.getInt("comparingPercentage", getResources().getInteger(R.integer.comparingPercentage));
+																//tutaj dopisz kod mający na celu pobranie informacji z pliku "data"
+		
         fillData();
     }
     private void saveData() {
-																//tutaj dopisz kod mający na celu zapisanie informacji do pliku "dataFilename"
+																//tutaj dopisz kod mający na celu zapisanie informacji do pliku "data"
+																
+																
         editor.apply();
         super.onBackPressed();
     }

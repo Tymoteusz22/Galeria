@@ -1,7 +1,7 @@
 W celu zapisania najprostszych typów danych zastosowałem API "SharedPreferences", którego celem jest przechowanie najprostszych informacji tak, aby przy kolejnym otworzeniu aplikacji nie trzeba było ustawiać wszystkiego od początku
 
 1. Uzupełnij plik starting_data_values.xml przykładowymi danymi startowymi aplikacji
-2. W pliku SettingsScreen.java w w metodzie saveData() zapisz do pliku (zmienna "dataFilename") każdą daną zainicjowaną wcześniej w pliku starting_data_values.xml
+2. W pliku 'SettingsScreen.java' uzupełnij metody 'getData()' oraz 'saveData()' (zapis z/do pliku o nazwie "data" - String dataFilename) każdą daną zainicjowaną wcześniej w pliku starting_data_values.xml
 
 Przykład implementacji:
 https://developer.android.com/training/data-storage/shared-preferences
