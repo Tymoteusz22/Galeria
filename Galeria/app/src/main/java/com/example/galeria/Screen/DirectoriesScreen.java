@@ -259,18 +259,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         }
 
         directories.sort(Directory.dirNameCompare);
-        /*
-        //TODO check - WRITE PERMISSIONS
-        ArrayList<Integer> canWriteIdxs = new ArrayList<>();
 
-        for (int i=0; i<directories.size(); i++){
-            File f = new File(directories.get(i).getPath());
-            if (f.canWrite()){
-                canWriteIdxs.add(i);
-            }
-        }
-        Log.d(TAG, directories.size()+" "+String.valueOf(canWriteIdxs));
-         */
     }
 
     private void addAllToSelected(){

@@ -46,6 +46,8 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
     int imgColumns, dirColumns, lastMediaSortingMethod, matchingPercentage, comparingPercentage, themeUsed;
     boolean deleteAfterEmptying, perfectMatch;
 
+    String TAG = "DirectoryContentScreen";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getData();
@@ -335,9 +337,9 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
             img2 = Bitmap.createScaledBitmap(img2,width,height,false);
 
             /*
-            Log.d("aaaa",img1.getWidth()+"<-1  width  2->"+img2.getWidth());
-            Log.d("aaaa",img1.getHeight()+"<-1  height  2->"+img2.getHeight());
-            Log.d("aaaa", String.valueOf(img1.sameAs(img2)));
+            Log.d(TAG,img1.getWidth()+"<-1  width  2->"+img2.getWidth());
+            Log.d(TAG,img1.getHeight()+"<-1  height  2->"+img2.getHeight());
+            Log.d(TAG, String.valueOf(img1.sameAs(img2)));
             */
 
             Random random = new Random();
