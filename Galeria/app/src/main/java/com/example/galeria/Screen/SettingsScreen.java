@@ -112,16 +112,14 @@ public class SettingsScreen extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(dataFilename, MODE_PRIVATE);
         dirColumns = sharedPreferences.getInt("dirColumns", getResources().getInteger(R.integer.dirColumns));
         imgColumns = sharedPreferences.getInt("imgColumns", getResources().getInteger(R.integer.imgColumns));
-
-        rotateWithGestures = sharedPreferences.getBoolean("rotateWithGestures",getResources().getBoolean(R.bool.rotateWithGestures));
-
-        deleteAfterEmptying = sharedPreferences.getBoolean("deleteAfterEmptying",getResources().getBoolean(R.bool.deleteAfterEmptying));
-        moveToBinBeforeDeleting = sharedPreferences.getBoolean("moveToBinBeforeDeleting",getResources().getBoolean(R.bool.moveToBinBeforeDeleting));
         daysBeforeDeleting = sharedPreferences.getInt("daysBeforeDeleting",getResources().getInteger(R.integer.daysBeforeDeleting));
-
-        perfectMatch = sharedPreferences.getBoolean("perfectMatch",getResources().getBoolean(R.bool.perfectMatch));
         matchingPercentage = sharedPreferences.getInt("matchingPercentage",getResources().getInteger(R.integer.matchingPercentage));
         comparingPercentage = sharedPreferences.getInt("comparingPercentage", getResources().getInteger(R.integer.comparingPercentage));
+
+        rotateWithGestures = sharedPreferences.getBoolean("rotateWithGestures",getResources().getBoolean(R.bool.rotateWithGestures));
+        deleteAfterEmptying = sharedPreferences.getBoolean("deleteAfterEmptying",getResources().getBoolean(R.bool.deleteAfterEmptying));
+        moveToBinBeforeDeleting = sharedPreferences.getBoolean("moveToBinBeforeDeleting",getResources().getBoolean(R.bool.moveToBinBeforeDeleting));
+        perfectMatch = sharedPreferences.getBoolean("perfectMatch",getResources().getBoolean(R.bool.perfectMatch));
         fillData();
     }
     private void saveData() {

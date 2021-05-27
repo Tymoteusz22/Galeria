@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.example.galeria.Fragments_and_Popups.gifFragment">
+    tools:context="com.example.galeria.Fragments.gifFragment">
 
     <ImageView
         android:id="@+id/single_gifView"

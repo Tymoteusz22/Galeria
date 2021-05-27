@@ -1,4 +1,4 @@
-package com.example.galeria.Fragments_and_Popups;
+package com.example.galeria.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -40,7 +40,7 @@ public class gifFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gif, container, false);
 
         setGifView(view);
-        setGifViewListeners(view);
+        setGifFragmentListeners(view);
 
         return view;
     }
@@ -49,7 +49,7 @@ public class gifFragment extends Fragment {
         ImageView gifView = view.findViewById(R.id.single_gifView);
         Glide.with(context).load(media.get(mediaPathIdx).getPath()).into(gifView);
     }
-    private void setGifViewListeners(View view){
+    private void setGifFragmentListeners(View view){
         view.setOnTouchListener(new OnSwipeListener(context){
             @Override
             public void onSwipeLeftRight(){

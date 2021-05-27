@@ -5,15 +5,16 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.galeria.Adapters.GridViewMediaIconAdapter;
 import com.example.galeria.Functions_and_Interfaces.ItemClickInterface;
 import com.example.galeria.Functions_and_Interfaces.MediaWrapperForBinder;
 import com.example.galeria.Media;
@@ -26,7 +27,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+/**
+ GridView <-> RecyclerView => onCreate, setView
+ */
+
 public class AllMediaScreen extends AppCompatActivity implements ItemClickInterface{
+
+    GridView allGridView;
+    GridViewMediaIconAdapter gridViewMediaIconAdapter;
 
     RecyclerView allRecyclerView;
     MediaIconAdapter mediaIconAdapter;
@@ -34,7 +42,7 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
 
     ArrayList<Media> allMedia = new ArrayList<>();
     ArrayList<Integer> selected = new ArrayList<>();
-    private final String[] extensions = {".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
 
     String dataFilename = "data";
     int imgColumns, matchingPercentage, lastMediaSortingMethod, comparingPercentage, themeUsed;
@@ -56,8 +64,15 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
         }
 
         super.onCreate(savedInstanceState);
+
+        //
         setContentView(R.layout.recyclerview_all_activity);
         allRecyclerView = findViewById(R.id.recyclerView_all_images);
+        //
+        /*
+        setContentView(R.layout.gridview_all_activity);
+        allGridView = findViewById(R.id.gridView_view_all_images);
+        */
 
         setTitle(getResources().getString(R.string.all_images));
 
@@ -111,11 +126,18 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
                 allMedia.sort(Media.mediaSizeCompare);
                 break;
         }
-
+        //
         mediaIconAdapter = new MediaIconAdapter(allMedia, imgColumns, this);
         allRecyclerView.setAdapter(mediaIconAdapter);
         allRecyclerView.setLayoutManager(new GridLayoutManager(this, imgColumns));
+        //
+        /*
+        gridViewMediaIconAdapter = new GridViewMediaIconAdapter(allMedia, imgColumns, this);
+        allGridView.setAdapter(gridViewMediaIconAdapter);
+        allGridView.setNumColumns(imgColumns);
+        */
     }
+
 
 
     //menu functions

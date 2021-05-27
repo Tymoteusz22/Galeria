@@ -5,14 +5,14 @@
     <integer name="lastDirSortingMethod">1</integer>
     <integer name="lastImgSortingMethod">5</integer>
 
-    <integer name="daysBeforeDeleting">9999</integer>
+    <integer name="daysBeforeDeleting">9999</integer> <!-- not used yet -->
     <integer name="comparingPercentage">100</integer>
     <integer name="matchingPercentage">100</integer>
 
-    <bool name="rotateWithGestures">false</bool>
-    <bool name="deleteAfterEmptying">false</bool>
-    <bool name="moveToBinBeforeDeleting">false</bool>
+    <bool name="rotateWithGestures">false</bool> <!-- not used yet -->
+    <bool name="deleteAfterEmptying">true</bool>
+    <bool name="moveToBinBeforeDeleting">false</bool> <!-- not used yet -->
     <bool name="perfectMatch">true</bool>
 
-    <integer name="themeUsed">1</integer>
+    <integer name="themeUsed">1</integer> <!-- not used yet -->
 </resources>

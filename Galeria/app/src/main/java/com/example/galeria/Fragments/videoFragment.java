@@ -1,4 +1,4 @@
-package com.example.galeria.Fragments_and_Popups;
+package com.example.galeria.Fragments;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -45,7 +45,7 @@ public class videoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_video, container, false);
         setVideoView(view);
 
-        setVideoViewListeners(view);
+        setVideoFragmentListeners(view);
 
         return view;
     }
@@ -75,7 +75,7 @@ public class videoFragment extends Fragment {
         videoView.start();
     }
 
-    private void setVideoViewListeners(View view){
+    private void setVideoFragmentListeners(View view){
         view.setOnTouchListener(new OnSwipeListener(context){
             @Override
             public void onSwipeLeftRight(){

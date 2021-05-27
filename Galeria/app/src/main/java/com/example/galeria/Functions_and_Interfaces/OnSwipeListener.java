@@ -28,6 +28,7 @@ public class OnSwipeListener implements View.OnTouchListener, GestureDetector.On
     }
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+
         if (Math.abs(velocityX)>1000){
             if (e1.getX()>e2.getX()){
                 onSwipeRightLeft();

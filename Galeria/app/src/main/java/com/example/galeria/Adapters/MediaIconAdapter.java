@@ -18,7 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.galeria.Functions_and_Interfaces.ItemClickInterface;
 import com.example.galeria.Media;
 import com.example.galeria.R;
@@ -51,14 +50,14 @@ public class MediaIconAdapter extends RecyclerView.Adapter<MediaIconAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         //
-        Glide.with(context).load(media.get(position).getPath()).centerCrop().into(holder.imageView);
-
+        Glide.with(context).asBitmap().load(media.get(position).getPath()).centerCrop().into(holder.imageView);
         if (media.get(position).getSelected()){
             holder.box.setVisibility(View.VISIBLE);
         } else {
             holder.box.setVisibility(View.INVISIBLE);
         }
         //
+        //version myMaxEffi
         /*
         double maxIconWidth = (double) Resources.getSystem().getDisplayMetrics().widthPixels/imgColumns;
         switch(media.get(position).getType()) {
@@ -108,6 +107,59 @@ public class MediaIconAdapter extends RecyclerView.Adapter<MediaIconAdapter.View
             default:
                 Log.d("TUTAJ","Tutaj byłby gifImageView");
                 break;
+        }
+        if (media.get(position).getSelected()){
+            holder.box.setVisibility(View.VISIBLE);
+        } else {
+            holder.box.setVisibility(View.INVISIBLE);
+        }
+        */
+        //version myFirstTry
+        /*
+        double maxIconWidth = (double) Resources.getSystem().getDisplayMetrics().widthPixels/imgColumns;
+        switch(media.get(position).getType()) {
+            case 1:
+                Bitmap img = BitmapFactory.decodeFile(media.get(position).getPath());
+                double scale = (double) (img.getWidth()/maxIconWidth);
+                img = Bitmap.createScaledBitmap(img, (int) (maxIconWidth), (int) (img.getHeight()/scale),false);
+
+                holder.imageView.setImageBitmap(img);
+                if (media.get(position).getSelected()) {
+                    holder.box.setVisibility(View.VISIBLE);
+                }
+                holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+                break;
+            case 2:
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(media.get(position).getPath());
+                int width = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                int height = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                retriever.release();
+                scale = (double) (width/maxIconWidth);
+                try {
+                    Bitmap video = ThumbnailUtils.createVideoThumbnail(
+                            new File(media.get(position).getPath()),
+                            new Size((int) maxIconWidth,(int) (height/scale)),
+                            new CancellationSignal()
+                    );
+                    holder.imageView.setImageBitmap(video);
+                    if (media.get(position).getSelected()) {
+                        holder.box.setVisibility(View.VISIBLE);
+                    }
+                    holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                Log.d("TUTAJ","Tutaj będzie gifImageView");
+                break;
+        }
+        if (media.get(position).getSelected()){
+            holder.box.setVisibility(View.VISIBLE);
+        } else {
+            holder.box.setVisibility(View.INVISIBLE);
         }
         */
     }

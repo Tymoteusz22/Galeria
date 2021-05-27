@@ -3,20 +3,18 @@ package com.example.galeria.Screen;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaMetadataRetriever;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
@@ -28,9 +26,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.galeria.Adapters.MoveMediaAdapter;
-import com.example.galeria.Fragments_and_Popups.gifFragment;
-import com.example.galeria.Fragments_and_Popups.imgFragment;
-import com.example.galeria.Fragments_and_Popups.videoFragment;
+import com.example.galeria.Fragments.gifFragment;
+import com.example.galeria.Fragments.imgFragment;
+import com.example.galeria.Fragments.videoFragment;
 import com.example.galeria.Functions_and_Interfaces.MediaWrapperForBinder;
 import com.example.galeria.Functions_and_Interfaces.OnMediaListener;
 import com.example.galeria.Media;
@@ -41,7 +39,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class FullScreen extends AppCompatActivity implements OnMediaListener {
@@ -108,19 +105,11 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
                              WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
     private void hideAllBars(){
-        if (Build.VERSION.SDK_INT > 30) {
-
-
-        } else {
-            actionBar.hide();
-            decorView.setSystemUiVisibility(uiOptions);
-            hiddenBars = true;
-        }
+        actionBar.hide();
+        hiddenBars = true;
     }
     private void showAllBars(){
         actionBar.show();
-        getWindow().clearFlags(uiOptions);
-
         hiddenBars = false;
     }
     private void setView(){
@@ -245,18 +234,16 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
     public void confirm(View view) {
         EditText text = dialog.findViewById(R.id.rename);
         String newName = text.getText().toString();
-        String oldName = media.get(mediaPathIdx).getName();
         String oldPath = media.get(mediaPathIdx).getPath();
-        String extension = oldName.substring(oldName.lastIndexOf(".")+1);
+        String extension = oldPath.substring(oldPath.lastIndexOf("."));
 
         if (newName.length()>=3){
             File mediaFile = new File(oldPath);
-            mediaFile.renameTo(new File(oldPath.substring(0,oldPath.lastIndexOf("/")+1)+newName+"."+extension));
+            mediaFile.renameTo(new File(oldPath.substring(0,oldPath.lastIndexOf("/")+1)+newName+extension));
             media.get(mediaPathIdx).setName(newName);
             setTitle(newName+extension);
         }
         dialog.dismiss();
-
     }
 
     private void moveMedia(){
@@ -326,5 +313,4 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
             hiddenBars = true;
         }
     }
-
 }

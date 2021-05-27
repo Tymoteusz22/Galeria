@@ -20,7 +20,6 @@ public class Directory{
     }
 
     private void setSize() {
-        // zlicz rozmiar
         File currentDir = new File(String.valueOf(path));
         File[] filesList = currentDir.listFiles();
         for (File f : filesList){

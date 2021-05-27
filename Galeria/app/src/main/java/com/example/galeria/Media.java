@@ -3,7 +3,6 @@ package com.example.galeria;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
@@ -15,7 +14,7 @@ public class Media {
     private boolean selected;
     private FileTime date;
     private final int image_video_gif;
-    private final String[] imageExtensions = {".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp"};
+    private final String[] imageExtensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp"};
     //private final String[] videoExtensions = {".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
 
     public Media(String path) throws IOException {

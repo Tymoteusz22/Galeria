@@ -5,14 +5,21 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.DocumentsContract;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -32,9 +39,7 @@ import java.util.Collections;
 
 public class DirectoriesScreen extends AppCompatActivity implements ItemClickInterface {
 
-    static int READ_EXTERNAL_STORAGE = 1;
-    static int WRITE_EXTERNAL_STORAGE = 1;
-    static int MANAGE_EXTERNAL_STORAGE = 1;
+    ActivityResultLauncher<Intent> resultLauncher;
 
     RecyclerView dirRecyclerView;
     DirectoryIconAdapter directoryIconAdapter;
@@ -42,20 +47,24 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
 
     private ArrayList<Directory> directories = new ArrayList<>();
     private ArrayList<Integer> selected = new ArrayList<>();
-    private ArrayList<Integer> canWriteIdxs = new ArrayList<>();
 
     String dataFilename = "data";
     int dirColumns, lastDirSortingMethod, themeUsed;
     boolean deleteAfterEmptying;
     Dialog dialog;
 
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".mp4",".avi",".gif",".tif",".tiff",".bmp",".webm",".flv",".amv",".m4p"};
 
-    private final String[] extensions = {".jfif",".jpg",".jpeg",".png",".mp4",".avi",".gif",".tif",".tiff",".bmp",".webm",".flv",".amv",".m4p"};
+    String TAG = "DirectoriesScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        checkPermissions();
+        if (!hasPermissions()){
+            setResultLauncher();
+            getPermissions();
+        }
         getData();
+
         switch (themeUsed){
             case 2:
                 //setTheme(R.style.GalleryThemeNight);
@@ -67,6 +76,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                 setTheme(R.style.GalleryThemeDay);
                 break;
         }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recyclerview_dirs_activity);
         dirRecyclerView = findViewById(R.id.recyclerView_folders);
@@ -81,10 +91,11 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         setView();
     }
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         saveData();
     }
+
 
     //'visible' functions
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -118,6 +129,53 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         dirRecyclerView.setLayoutManager(new GridLayoutManager(this,dirColumns));
     }
 
+
+    // permissions
+    private boolean hasPermissions(){
+        if (Build.VERSION.SDK_INT >= 30){
+            return Environment.isExternalStorageManager();
+        } else {
+            int writePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+            return (writePermission==PackageManager.PERMISSION_GRANTED) && (readPermission==PackageManager.PERMISSION_GRANTED);
+        }
+    }
+    private void getPermissions(){
+        if (Build.VERSION.SDK_INT >= 30) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.addCategory("android.intent.category.DEFAULT");
+            intent.setData(Uri.parse(String.format("package:%s", getApplicationContext().getPackageName())));
+            openActivityForResult();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},11);
+        }
+    }
+
+    private void setResultLauncher(){
+        resultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == PackageManager.PERMISSION_GRANTED) {
+                            // There are no request codes
+                            Intent data = result.getData();
+                            if (data!=null){
+                                Uri tree = data.getData();
+                                DocumentsContract.buildChildDocumentsUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree));
+
+                            }
+                        }
+                    }
+                });
+    }
+    public void openActivityForResult() {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        resultLauncher.launch(intent);
+    }
+
+
     //menu functions
     public void menuSortNameAscFunc(MenuItem item) {
         if (lastDirSortingMethod != 1) {
@@ -143,7 +201,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         }
         setView();
     }
-    public void menuShowAllFunc(MenuItem item) {
+    public void menuStartAllMediaActivity(MenuItem item) {
         startAllMediaActivity();
     }
     public void menuLaunchSettingsActivity(MenuItem item) {
@@ -164,33 +222,28 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
 
 
     //content functions
-    private void checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE);
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE);
-        }
-        if (Build.VERSION.SDK_INT >= 30) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, MANAGE_EXTERNAL_STORAGE);
-            }
-        }
-    }
 
     private void fulfillDirectories() {
         directories.clear();
 
+        String generalInternalPath = "/storage/emulated/0";
+        /*
+        if (Build.VERSION.SDK_INT >= 30){
+            //generalInternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            generalInternalPath = "/storage/emulated/0";
+        } else {
+            generalInternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+        */
 
-
-        getDirectoriesPaths("/storage/emulated/0/Download"); //domyslne miejsce zapisu
-        getDirectoriesPaths("/storage/emulated/0/DCIM"); //ss i camera
-        getDirectoriesPaths("/storage/emulated/0/Pictures"); //tutaj niektore aplikacje tworza swoje foldery i zapisuja pliki, ale tez to powinno byc miejsce zapisu interesujacych plikow
+        getDirectoriesPaths(generalInternalPath +"/"+ Environment.DIRECTORY_DOWNLOADS); //domyslne miejsce zapisu
+        getDirectoriesPaths(generalInternalPath +"/"+ Environment.DIRECTORY_DCIM); //ss i camera
+        getDirectoriesPaths(generalInternalPath +"/"+ Environment.DIRECTORY_PICTURES); //tutaj niektore aplikacje tworza swoje foldery i zapisuja pliki, ale tez to powinno byc miejsce zapisu interesujacych plikow
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
             File[] pathsToAppSpecificMedia = this.getExternalMediaDirs();
             for (File f:pathsToAppSpecificMedia){
-                if (!f.getAbsolutePath().startsWith("/storage/emulated/0")) {
+                if (!f.getAbsolutePath().startsWith(generalInternalPath)) {
                     String path = f.getAbsolutePath();
                     int idx = path.indexOf("/");
                     String tmp = path.substring(idx + 1);
@@ -198,26 +251,26 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                     tmp = tmp.substring(idx+1);
                     idx += tmp.indexOf("/") + 1;
                     path = path.substring(0, idx + 1);
-                    getDirectoriesPaths(path + "/Download");
-                    getDirectoriesPaths(path + "/DCIM");
-                    getDirectoriesPaths(path + "/Pictures");
+                    getDirectoriesPaths(path +"/"+Environment.DIRECTORY_DOWNLOADS);
+                    getDirectoriesPaths(path +"/"+Environment.DIRECTORY_DCIM);
+                    getDirectoriesPaths(path +"/"+Environment.DIRECTORY_PICTURES);
                 }
             }
         }
-        /*
+
         directories.sort(Directory.dirNameCompare);
+        /*
         //TODO check - WRITE PERMISSIONS
-        canWriteIdxs.clear();
+        ArrayList<Integer> canWriteIdxs = new ArrayList<>();
+
         for (int i=0; i<directories.size(); i++){
-            Log.d("aaaa",directories.get(i).getPath());
             File f = new File(directories.get(i).getPath());
-            Log.d("aaaa", directories.size()+" "+String.valueOf(f.canWrite()));
             if (f.canWrite()){
                 canWriteIdxs.add(i);
             }
         }
-        Log.d("aaaa", directories.size()+" "+String.valueOf(canWriteIdxs));
-        */
+        Log.d(TAG, directories.size()+" "+String.valueOf(canWriteIdxs));
+         */
     }
 
     private void addAllToSelected(){
@@ -297,21 +350,21 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         i.putExtras(bundle);
         startActivity(i); //rozpocznij nowa aktywnosc (nowy Screen) przekazujac dalej foldery
     }
-    private void launchSettingsActivity(){
+    private void launchSettingsActivity() {
         removeAllFromSelected();
         startActivity(new Intent(this, SettingsScreen.class));
     }
 
 
     //helping functions
-    private void getDirectoriesPaths(String currentPath){
+    private void getDirectoriesPaths(String currentPath) {
         File dirFromPath = new File(currentPath);
+        //Log.d(TAG,dirFromPath.getAbsolutePath()+" "+dirFromPath.canWrite());
         if (containsMedia(dirFromPath)) {
             directories.add(new Directory(Paths.get(currentPath)));
         }
-        File[] filesList = dirFromPath.listFiles();
-        if (filesList != null) {
-            for (File f : filesList) {
+        if (dirFromPath.listFiles() != null) {
+            for (File f : dirFromPath.listFiles()) {
                 if (f.isDirectory()) {
                     getDirectoriesPaths(f.getAbsolutePath());
                 }

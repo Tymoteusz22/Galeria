@@ -37,7 +37,7 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
 
     ArrayList<Media> media = new ArrayList<>();
     ArrayList<Integer> selected = new ArrayList<>();
-    private final String[] extensions = {".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
     ArrayList<String> directories = new ArrayList<>();
     ArrayList<String> mediaToPass = new ArrayList<>();
     private String directoryPath;
@@ -70,8 +70,6 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
 
         setTitle(directoryPath.substring(directoryPath.lastIndexOf("/")+1));
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
     @Override
     protected void onResume() {
@@ -101,13 +99,6 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
         menuItemDeselectAll = menu.findItem(R.id.menu_deselect_all);
         return true;
     }
-    public boolean onOptionsItemSelected(MenuItem menuItem){
-        super.onOptionsItemSelected(menuItem);
-        if (menuItem.getItemId()==android.R.id.home){
-            this.finish();
-        }
-        return super.onOptionsItemSelected(menuItem);
-    } //back button
 
     private void setView() {
         switch (lastMediaSortingMethod) {
@@ -343,9 +334,11 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
             Bitmap img2 = BitmapFactory.decodeFile(media2.getPath());
             img2 = Bitmap.createScaledBitmap(img2,width,height,false);
 
+            /*
             Log.d("aaaa",img1.getWidth()+"<-1  width  2->"+img2.getWidth());
             Log.d("aaaa",img1.getHeight()+"<-1  height  2->"+img2.getHeight());
             Log.d("aaaa", String.valueOf(img1.sameAs(img2)));
+            */
 
             Random random = new Random();
             int matching=0;

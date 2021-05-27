@@ -54,7 +54,7 @@
     <item
         android:id="@+id/menu_show_images"
         android:title="@string/view_all_images"
-        android:onClick="menuShowAllFunc"/>
+        android:onClick="menuStartAllMediaActivity"/>
     <item
         android:id="@+id/menu_open_settings"
         android:title="@string/settings"

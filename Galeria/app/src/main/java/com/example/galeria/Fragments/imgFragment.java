@@ -1,4 +1,4 @@
-package com.example.galeria.Fragments_and_Popups;
+package com.example.galeria.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -28,7 +28,9 @@ public class imgFragment extends Fragment {
     LayoutInflater layoutInflater;
     ArrayList<Media> media;
 
-    public imgFragment(Context context, ArrayList<Media> media, int mediaPathIdx, OnMediaListener onMediaListener) {
+    public imgFragment(Context context, ArrayList<Media> media, int mediaPathIdx,
+                       OnMediaListener onMediaListener) {
+
         this.mediaPathIdx = mediaPathIdx;
         this.context = context;
         this.media = media;
@@ -42,7 +44,7 @@ public class imgFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_img, container, false);
         setImageView(view);
-        setImageViewListeners(view);
+        setImageFragmentListeners(view);
         return view;
     }
 
@@ -51,7 +53,7 @@ public class imgFragment extends Fragment {
         imageView.setImageURI(Uri.parse(media.get(mediaPathIdx).getPath()));
     }
 
-    private void setImageViewListeners(View view){
+    private void setImageFragmentListeners(View view){
 
         view.setOnTouchListener(new OnSwipeListener(context){
             @Override
