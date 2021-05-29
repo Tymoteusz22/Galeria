@@ -50,6 +50,12 @@ public class SimilarImageIconAdapter extends RecyclerView.Adapter<SimilarImageIc
         int poszukiwanyIdx = dir.lastIndexOf("/");
         String text = mediaPath.substring(poszukiwanyIdx + 1);
         holder.textView.setText(text);
+
+        if (media.get(position).getSelected()){
+            holder.box.setVisibility(View.VISIBLE);
+        } else {
+            holder.box.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -59,11 +65,13 @@ public class SimilarImageIconAdapter extends RecyclerView.Adapter<SimilarImageIc
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        ImageView box;
         TextView textView;
 
         public ViewHolder(View item){
             super(item);
             imageView = item.findViewById(R.id.imageView_similar_media_icon);
+            box = item.findViewById(R.id.imageView_media_icon_checked_box);
             textView = item.findViewById(R.id.textView_similar_media_path);
             item.setOnClickListener(new View.OnClickListener() {
                 @Override

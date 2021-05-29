@@ -1,24 +1,23 @@
 package com.example.galeria.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import androidx.fragment.app.Fragment;
+
 import com.example.galeria.Functions_and_Interfaces.OnMediaListener;
 import com.example.galeria.Functions_and_Interfaces.OnSwipeListener;
 import com.example.galeria.Media;
 import com.example.galeria.R;
-
-import java.util.ArrayList;
 
 public class videoFragment extends Fragment {
 
@@ -27,22 +26,22 @@ public class videoFragment extends Fragment {
     int mediaPathIdx;
     Context context;
     LayoutInflater layoutInflater;
-    ArrayList<Media> media;
+    Media media;
+    VideoView videoView;
 
-    public videoFragment(Context context, ArrayList<Media> media, int mediPathIdx, OnMediaListener onMediaListener) {
-        this.mediaPathIdx = mediPathIdx;
+    public videoFragment(Context context, Media media, int mediaPathIdx, OnMediaListener onMediaListener) {
+        this.mediaPathIdx = mediaPathIdx;
         this.context = context;
         this.media = media;
         this.onMediaListener = onMediaListener;
         layoutInflater = LayoutInflater.from(context);
     }
 
-    VideoView videoView;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_video, container, false);
+
         setVideoView(view);
 
         setVideoFragmentListeners(view);
@@ -50,10 +49,9 @@ public class videoFragment extends Fragment {
         return view;
     }
 
-    //helping functions
     private void setVideoView(View view) {
         videoView = view.findViewById(R.id.single_videoView);
-        videoView.setVideoURI(Uri.parse(media.get(mediaPathIdx).getPath()));
+        videoView.setVideoURI(Uri.parse(media.getPath()));
         MediaController mediaController = new MediaController(context);
 
         videoView.setMediaController(mediaController);

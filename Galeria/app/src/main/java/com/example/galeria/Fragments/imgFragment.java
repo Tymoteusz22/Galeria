@@ -26,9 +26,9 @@ public class imgFragment extends Fragment {
     int mediaPathIdx;
     Context context;
     LayoutInflater layoutInflater;
-    ArrayList<Media> media;
+    Media media;
 
-    public imgFragment(Context context, ArrayList<Media> media, int mediaPathIdx,
+    public imgFragment(Context context, Media media, int mediaPathIdx,
                        OnMediaListener onMediaListener) {
 
         this.mediaPathIdx = mediaPathIdx;
@@ -50,7 +50,7 @@ public class imgFragment extends Fragment {
 
     private void setImageView(View view) {
         ImageView imageView = view.findViewById(R.id.single_imageView);
-        imageView.setImageURI(Uri.parse(media.get(mediaPathIdx).getPath()));
+        imageView.setImageURI(Uri.parse(media.getPath()));
     }
 
     private void setImageFragmentListeners(View view){

@@ -21,5 +21,9 @@
         android:visible="false"
         android:title="@string/deselect_all"
         android:onClick="menuDeselectAll"/>
+    <item
+        android:id="@+id/menu_open_settings"
+        android:title="@string/settings"
+        android:onClick="menuLaunchSettingsActivity"/>
 
 </menu>

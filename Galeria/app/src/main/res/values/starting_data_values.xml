@@ -2,7 +2,9 @@
 <resources>
     <integer name="dirColumns">3</integer>
     <integer name="imgColumns">4</integer>
+    <!-- 1 == a->z 3 == smallest->largest-->
     <integer name="lastDirSortingMethod">1</integer>
+    <!-- 1-4 == same as in dirs 5 == newest -> oldest -->
     <integer name="lastImgSortingMethod">5</integer>
 
     <integer name="daysBeforeDeleting">9999</integer> <!-- not used yet -->
@@ -14,5 +16,7 @@
     <bool name="moveToBinBeforeDeleting">false</bool> <!-- not used yet -->
     <bool name="perfectMatch">true</bool>
 
-    <integer name="themeUsed">1</integer> <!-- not used yet -->
+    <!-- not used yet (practically) -->
+    <integer name="themeUsed">1</integer> <!-- JPWP/TO_DO/Colors -->
+
 </resources>

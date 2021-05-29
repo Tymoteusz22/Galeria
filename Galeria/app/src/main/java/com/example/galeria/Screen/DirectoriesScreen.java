@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.example.galeria.Functions_and_Interfaces.ItemClickInterface;
 import com.example.galeria.R;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,6 +95,9 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
     @Override
     protected void onPause() {
         super.onPause();
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
         saveData();
     }
 
@@ -123,7 +128,9 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                 directories.sort(Directory.dirSizeCompare.reversed());
                 break;
         }
-
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
         directoryIconAdapter = new DirectoryIconAdapter(directories, this);
         dirRecyclerView.setAdapter(directoryIconAdapter);
         dirRecyclerView.setLayoutManager(new GridLayoutManager(this,dirColumns));
@@ -213,10 +220,10 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
     public void menuDeleteDirectories(MenuItem item) {
         deleteSelectedDirectories();
     }
-    public void selectAll(MenuItem item) {
+    public void menuSelectAll(MenuItem item) {
         addAllToSelected();
     }
-    public void deselectAll(MenuItem item) {
+    public void menuDeselectAll(MenuItem item) {
         removeAllFromSelected();
     }
 
@@ -257,9 +264,6 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                 }
             }
         }
-
-        directories.sort(Directory.dirNameCompare);
-
     }
 
     private void addAllToSelected(){
@@ -302,7 +306,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
 
         for (int i=selected.size()-1; i>=0; i--){
             deleteDir(new File(directories.get(selected.get(i)).getPath()));
-            directories.remove(directories.get(i));
+            directories.remove(directories.get(selected.get(i)));
             directoryIconAdapter.notifyItemRemoved(selected.get(i));
             selected.remove(i);
         }
@@ -375,10 +379,12 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         return false;
     }
     private boolean isMedia(String name) {
-        for (String s:extensions){
-            if (name.endsWith(s)){
-                return true;
-            }
+        String type = URLConnection.guessContentTypeFromName(name);
+        if (type == null){
+            return false;
+        }
+        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
+            return true;
         }
         return false;
     }

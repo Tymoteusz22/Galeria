@@ -1,7 +1,11 @@
 package com.example.galeria;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -14,6 +18,7 @@ public class Media {
     private boolean selected;
     private FileTime date;
     private final int image_video_gif;
+
     private final String[] imageExtensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp"};
     //private final String[] videoExtensions = {".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
 
@@ -67,13 +72,10 @@ public class Media {
     public static Comparator<Media> mediaNameCompare = new Comparator<Media>() {
         @Override
         public int compare(Media o1, Media o2) {
-            if (o2.getName().toLowerCase().equals(o1.getName().toLowerCase())){
-                if (o2.getDate().equals(o1.getDate())){
-                    return (int) (o2.getSize()-o1.getSize());
-                }
+            if (o1.getName().toLowerCase().equals(o2.getName().toLowerCase())){
                 return o2.getDate().compareTo(o1.getDate());
             }
-            return o2.getName().toLowerCase().compareTo(o1.getName().toLowerCase());
+            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
         }
     };
     public static Comparator<Media> mediaDateCompare = new Comparator<Media>() {
@@ -85,6 +87,15 @@ public class Media {
     public static Comparator<Media> mediaSizeCompare = new Comparator<Media>() {
         @Override
         public int compare(Media o1, Media o2) {
+            if (o2.getSize() == o1.getSize()){
+                if (o1.getName().toLowerCase().equals(o2.getName().toLowerCase())){
+                    if (o1.getName().equals(o2.getName())){
+                        return o2.getDate().compareTo(o1.getDate());
+                    }
+                    return o1.getName().compareTo(o2.getName());
+                }
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+            }
             return (int) (o2.getSize() - o1.getSize());
         }
     };

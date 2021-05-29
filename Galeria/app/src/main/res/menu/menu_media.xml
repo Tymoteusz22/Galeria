@@ -17,5 +17,9 @@
         android:id="@+id/menu_delete_file"
         android:title="@string/delete"
         android:onClick="menuDeleteMedia"/>
+    <item
+        android:id="@+id/menu_open_settings"
+        android:title="@string/settings"
+        android:onClick="menuLaunchSettingsActivity"/>
 
 </menu>

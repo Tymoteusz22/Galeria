@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
@@ -23,6 +24,7 @@ import com.example.galeria.Adapters.MediaIconAdapter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -42,11 +44,12 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
 
     ArrayList<Media> allMedia = new ArrayList<>();
     ArrayList<Integer> selected = new ArrayList<>();
-    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
 
     String dataFilename = "data";
     int imgColumns, matchingPercentage, lastMediaSortingMethod, comparingPercentage, themeUsed;
     boolean perfectMatch;
+
+    String TAG = "AllMediaScreen";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +96,9 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
     @Override
     protected void onPause(){
         super.onPause();
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
         saveData();
     }
 
@@ -125,6 +131,9 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
             default:
                 allMedia.sort(Media.mediaSizeCompare);
                 break;
+        }
+        if (selected.size()>0) {
+            removeAllFromSelected();
         }
         //
         mediaIconAdapter = new MediaIconAdapter(allMedia, imgColumns, this);
@@ -186,7 +195,7 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
     }
 
     public void menuStartComparing(MenuItem item) {
-        compareAllMedia();
+        compareAllImages();
     }
 
     public void selectAll(MenuItem item) {
@@ -216,10 +225,12 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
         }
     }
     private boolean isMedia(String name) {
-        for (String s:extensions){
-            if (name.endsWith(s)){
-                return true;
-            }
+        String type = URLConnection.guessContentTypeFromName(name);
+        if (type == null){
+            return false;
+        }
+        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
+            return true;
         }
         return false;
     }
@@ -251,8 +262,7 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
 
         for (int i=selected.size()-1; i>=0; i--){
             //selected.get(i) == position
-            File file = new File(allMedia.get(selected.get(i)).getPath());
-            file.delete();
+            new File(allMedia.get(selected.get(i)).getPath()).delete();
             allMedia.remove(allMedia.get(selected.get(i)));
             mediaIconAdapter.notifyItemRemoved(selected.get(i));
             selected.remove(i);
@@ -262,8 +272,6 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
         }
         menuItemDeselectAll.setVisible(false);
         menuItemDeleteButton.setVisible(false);
-
-
     }
 
     //activity functions
@@ -274,35 +282,31 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
 
 
     //helping functions
-    private void compareAllMedia() {
+    private void compareAllImages() {
         ArrayList<Media> similarImages = new ArrayList<>();
         ArrayList<Media> copiedMedia = new ArrayList<>(allMedia);
 
         for (int i = copiedMedia.size() - 1; i >= 1; i--){
             if (copiedMedia.get(i).getType()==1){
-                boolean firstTry = true;
+                boolean firstMatch = true;
                 for (int j = i - 1; j >= 0; j--) {
                     if (copiedMedia.get(j).getType()==1) {
                         if (similar(copiedMedia.get(i),copiedMedia.get(j))){
-                            if (firstTry){
+                            if (firstMatch){
                                 similarImages.add(copiedMedia.get(i));
-                                copiedMedia.remove(i);
-                                firstTry=false;
-                                i--;
+                                firstMatch=false;
                             }
                             similarImages.add(copiedMedia.get(j));
-                            copiedMedia.remove(j);
+                            copiedMedia.remove(copiedMedia.get(j--));
                             i--;
                         }
                     } else {
-                        copiedMedia.remove(j);
-                        j--;
+                        copiedMedia.remove(copiedMedia.get(j));
                         i--;
                     }
                 }
-            } else {
-                copiedMedia.remove(i);
             }
+            copiedMedia.remove(copiedMedia.get(i));
         }
 
         if (similarImages.size() > 0) {
@@ -318,47 +322,61 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
     }
     private boolean similar(Media media1, Media media2) {
         if (perfectMatch){
-            Bitmap img1 = BitmapFactory.decodeFile(media1.getPath());
-            Bitmap img2 = BitmapFactory.decodeFile(media2.getPath());
-            return img1.sameAs(img2);
-        }
-        else {
+            int width, height;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(media1.getPath(),options);
-            int width1 = options.outWidth;
-            int height1 = options.outHeight;
+            width = options.outWidth;
+            height = options.outHeight;
+            BitmapFactory.decodeFile(media2.getPath(),options);
+            if (width != options.outWidth || height != options.outHeight){
+                return false;
+            }
+            Bitmap img1 = BitmapFactory.decodeFile(media1.getPath());
+            Bitmap img2 = BitmapFactory.decodeFile(media2.getPath());
+
+            return img1.sameAs(img2);
+        } else {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(media1.getPath(),options);
+            int width = options.outWidth;
+            int height = options.outHeight;
 
             options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(media1.getPath(),options);
-            int width2 = options.outWidth;
-            int height2 = options.outHeight;
-
-            options.outWidth = Math.max(width1, width2);
-            options.outHeight = Math.max(height1, height2);
+            width = Math.min(width, options.outWidth);
+            height = Math.min(height, options.outHeight);
 
             options.inJustDecodeBounds=false;
-            Bitmap img1 = BitmapFactory.decodeFile(media1.getPath(),options);
-            Bitmap img2 = BitmapFactory.decodeFile(media2.getPath(),options);
+            Bitmap img1 = BitmapFactory.decodeFile(media1.getPath());
+            img1 = Bitmap.createScaledBitmap(img1,width,height,false);
+            Bitmap img2 = BitmapFactory.decodeFile(media2.getPath());
+            img2 = Bitmap.createScaledBitmap(img2,width,height,false);
+
+
+            Log.d(TAG,img1.getWidth()+"<-1  width  2->"+img2.getWidth());
+            Log.d(TAG,img1.getHeight()+"<-1  height  2->"+img2.getHeight());
+            Log.d(TAG, String.valueOf(img1.sameAs(img2)));
+
 
             Random random = new Random();
             int matching=0;
-            int overall = (int) (options.outWidth*options.outHeight*comparingPercentage/100);
+            int overall = (int) (width*height*comparingPercentage/100);
             for (int i=0;i<overall;i++){
-                int x = random.nextInt(options.outWidth - 1);
-                int y = random.nextInt(options.outHeight - 1);
+                int x = random.nextInt(width);
+                int y = random.nextInt(height);
                 if (img1.getPixel(x, y) == img2.getPixel(x, y)) {
                     matching = matching + 1;
                 }
             }
-            if ((double) (matching/overall)>(double)(matchingPercentage/100)){
+            if ((double) (matching/overall)>=(double)(matchingPercentage/100)){
                 return true;
             }
         }
         return false;
-    } //TODO patrz DirContentScreen
-
+    } //TODO effectiveness
 
     //data functions
     private void getData(){

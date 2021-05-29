@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- przykład
-	<"TYP" name="NAZWA_POD_KTÓRĄ_ZMIENNA_JEST_OSIĄGALNA">"WARTOŚĆ"</"TYP">
+		<"TYP" name="NAZWA_POD_KTÓRĄ_ZMIENNA_JEST_OSIĄGALNA">"WARTOŚĆ"</"TYP">
 	-->
     <integer name="dirColumns"></integer>
     <integer name="imgColumns"></integer>
+    <!-- 1 == a->z 3 == smallest->largest-->
     <integer name="lastDirSortingMethod"></integer>
+    <!-- 1-4 == same as in dirs 5 == newest -> oldest -->
     <integer name="lastImgSortingMethod"></integer>
 
+    <integer name="daysBeforeDeleting"></integer> <!-- not used yet -->
     <integer name="comparingPercentage"></integer>
     <integer name="matchingPercentage"></integer>
 
+    <bool name="rotateWithGestures"></bool> <!-- not used yet -->
     <bool name="deleteAfterEmptying"></bool>
+    <bool name="moveToBinBeforeDeleting"></bool> <!-- not used yet -->
     <bool name="perfectMatch"></bool>
+
+    <!-- not used yet (practically) -->
+    <integer name="themeUsed">1</integer> <!-- PROSZĘ NIE ZMIENIAĆ TEJ WARTOŚCI -->
 
 </resources>

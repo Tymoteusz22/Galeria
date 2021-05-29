@@ -22,11 +22,11 @@ public class gifFragment extends Fragment {
 
     OnMediaListener onMediaListener;
 
-    ArrayList<Media> media;
+    Media media;
     Context context;
     int mediaPathIdx;
 
-    public gifFragment(Context context, ArrayList<Media> media, int mediaPathIdx, OnMediaListener onMediaListener) {
+    public gifFragment(Context context, Media media, int mediaPathIdx, OnMediaListener onMediaListener) {
         this.context = context;
         this.media = media;
         this.mediaPathIdx = mediaPathIdx;
@@ -47,7 +47,7 @@ public class gifFragment extends Fragment {
 
     private void setGifView(View view) {
         ImageView gifView = view.findViewById(R.id.single_gifView);
-        Glide.with(context).load(media.get(mediaPathIdx).getPath()).into(gifView);
+        Glide.with(context).asGif().load(media.getPath()).into(gifView);
     }
     private void setGifFragmentListeners(View view){
         view.setOnTouchListener(new OnSwipeListener(context){

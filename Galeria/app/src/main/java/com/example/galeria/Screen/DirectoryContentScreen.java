@@ -25,6 +25,7 @@ import com.example.galeria.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -37,7 +38,6 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
 
     ArrayList<Media> media = new ArrayList<>();
     ArrayList<Integer> selected = new ArrayList<>();
-    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
     ArrayList<String> directories = new ArrayList<>();
     ArrayList<String> mediaToPass = new ArrayList<>();
     private String directoryPath;
@@ -47,7 +47,7 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
     boolean deleteAfterEmptying, perfectMatch;
 
     String TAG = "DirectoryContentScreen";
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getData();
@@ -87,6 +87,9 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
     @Override
     protected void onPause(){
         super.onPause();
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
         saveData();
     }
 
@@ -123,7 +126,9 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
                 media.sort(Media.mediaSizeCompare);
                 break;
         }
-
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
         mediaIconAdapter = new MediaIconAdapter(media, imgColumns, this);
         contentRecyclerView.setAdapter(mediaIconAdapter);
         contentRecyclerView.setLayoutManager(new GridLayoutManager(this, imgColumns));
@@ -191,16 +196,18 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
         media.clear();
         File directory = new File(directoryPath);
         for (File f:directory.listFiles()){
-            if (isMedia(f)){
+            if (isMedia(f.getName())){
                 media.add(new Media(f.getAbsolutePath()));
             }
         }
     }
-    private boolean isMedia(File f) {
-        for (String s:extensions){
-            if (f.getName().toLowerCase().endsWith(s)){
-                return true;
-            }
+    private boolean isMedia(String name) {
+        String type = URLConnection.guessContentTypeFromName(name);
+        if (type == null){
+            return false;
+        }
+        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
+            return true;
         }
         return false;
     }
@@ -232,18 +239,14 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
         Collections.sort(selected);
         for (int i=selected.size()-1;i>=0;i--) {
             //selected.get(i) = position
-            File file = new File(media.get(selected.get(i)).getPath());
-            if (file.delete()) {
-                if (media.size() == 0) {
-                    if (deleteAfterEmptying) {
-                        file.getParentFile().delete();
-                    }
-                    super.onBackPressed();
-                }
-            }
+            new File(media.get(selected.get(i)).getPath()).delete();
             media.remove(media.get(selected.get(i)));
             mediaIconAdapter.notifyItemRemoved(selected.get(i));
             selected.remove(i);
+        }
+        if (media.size()==0 && deleteAfterEmptying){
+            new File(directoryPath).delete();
+            super.onBackPressed();
         }
         menuItemDeleteButton.setVisible(false);
         menuItemDeselectAll.setVisible(false);
@@ -266,29 +269,25 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
 
         for (int i = copiedMedia.size() - 1; i >= 1; i--){
             if (copiedMedia.get(i).getType()==1){
-                boolean firstTry = true;
+                boolean firstMatch = true;
                 for (int j = i - 1; j >= 0; j--) {
                     if (copiedMedia.get(j).getType()==1) {
                         if (similar(copiedMedia.get(i),copiedMedia.get(j))){
-                            if (firstTry){
+                            if (firstMatch){
                                 similarImages.add(copiedMedia.get(i));
-                                copiedMedia.remove(i);
-                                firstTry=false;
-                                i--;
+                                firstMatch=false;
                             }
                             similarImages.add(copiedMedia.get(j));
-                            copiedMedia.remove(j);
+                            copiedMedia.remove(copiedMedia.get(j--));
                             i--;
                         }
                     } else {
-                        copiedMedia.remove(j);
-                        j--;
+                        copiedMedia.remove(copiedMedia.get(j));
                         i--;
                     }
                 }
-            } else {
-                copiedMedia.remove(i);
             }
+            copiedMedia.remove(copiedMedia.get(i));
         }
 
         if (similarImages.size() > 0) {

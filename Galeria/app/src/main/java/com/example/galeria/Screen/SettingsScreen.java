@@ -14,16 +14,28 @@ import com.example.galeria.R;
 public class SettingsScreen extends AppCompatActivity {
 
     String dataFilename = "data";
-    private int dirColumns, imgColumns, daysBeforeDeleting, matchingPercentage, comparingPercentage;
+    private int dirColumns, imgColumns, daysBeforeDeleting, matchingPercentage, comparingPercentage, themeUsed;
     private boolean rotateWithGestures, deleteAfterEmptying, moveToBinBeforeDeleting, perfectMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        switch (themeUsed){
+            case 2:
+                //setTheme(R.style.GalleryThemeNight);
+                break;
+            case 3:
+                //setTheme(R.style.GalleryThemeCustom);
+                break;
+            default:
+                setTheme(R.style.GalleryThemeDay);
+                break;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_screen);
         setTitle(getResources().getString(R.string.settings));
 
         getData();
+        fillData();
     }
 
     public void openColorMenu(View view) {
@@ -110,17 +122,17 @@ public class SettingsScreen extends AppCompatActivity {
 
     private void getData(){
         SharedPreferences sharedPreferences = getSharedPreferences(dataFilename, MODE_PRIVATE);
-        dirColumns = sharedPreferences.getInt("dirColumns", getResources().getInteger(R.integer.dirColumns));
+        dirColumns = sharedPreferences.getInt("dirColumns", getResources().getInteger(R.integer.dirColumns)); // name:defaultValue
         imgColumns = sharedPreferences.getInt("imgColumns", getResources().getInteger(R.integer.imgColumns));
         daysBeforeDeleting = sharedPreferences.getInt("daysBeforeDeleting",getResources().getInteger(R.integer.daysBeforeDeleting));
         matchingPercentage = sharedPreferences.getInt("matchingPercentage",getResources().getInteger(R.integer.matchingPercentage));
         comparingPercentage = sharedPreferences.getInt("comparingPercentage", getResources().getInteger(R.integer.comparingPercentage));
+        themeUsed = sharedPreferences.getInt("themeUsed", getResources().getInteger(R.integer.themeUsed));
 
         rotateWithGestures = sharedPreferences.getBoolean("rotateWithGestures",getResources().getBoolean(R.bool.rotateWithGestures));
         deleteAfterEmptying = sharedPreferences.getBoolean("deleteAfterEmptying",getResources().getBoolean(R.bool.deleteAfterEmptying));
         moveToBinBeforeDeleting = sharedPreferences.getBoolean("moveToBinBeforeDeleting",getResources().getBoolean(R.bool.moveToBinBeforeDeleting));
         perfectMatch = sharedPreferences.getBoolean("perfectMatch",getResources().getBoolean(R.bool.perfectMatch));
-        fillData();
     }
     private void saveData() {
         SharedPreferences sharedPreferences = getSharedPreferences(dataFilename, MODE_PRIVATE);
@@ -135,7 +147,5 @@ public class SettingsScreen extends AppCompatActivity {
         editor.putBoolean("moveToBinBeforeDeleting",moveToBinBeforeDeleting);
         editor.putBoolean("perfectMatch", perfectMatch);
         editor.apply();
-        super.onBackPressed();
     }
-
 }

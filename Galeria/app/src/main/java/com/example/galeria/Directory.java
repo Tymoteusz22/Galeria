@@ -1,16 +1,15 @@
 package com.example.galeria;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.Comparator;
 
 public class Directory{
 
     private String path, name;
-    private int size=0;
+    private int size = 0;
     private boolean selected;
-
-    private final String[] extensions = {".jfif",".jpg",".jpeg",".png",".tif",".tiff",".bmp",".webm",".flv",".gif",".amv",".mp4",".m4p",".avi"};
 
     public Directory(Path p){
         path = p.toString();
@@ -23,16 +22,18 @@ public class Directory{
         File currentDir = new File(String.valueOf(path));
         File[] filesList = currentDir.listFiles();
         for (File f : filesList){
-            if (isMedia(f)) {
+            if (isMedia(f.getName())) {
                 this.size++;
             }
         }
     }
-    private boolean isMedia(File f) {
-        for (String s:extensions){
-            if (f.getName().toLowerCase().endsWith(s)){
-                return true;
-            }
+    private boolean isMedia(String fileName) {
+        String type = URLConnection.guessContentTypeFromName(fileName);
+        if (type == null){
+            return false;
+        }
+        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
+            return true;
         }
         return false;
     }

@@ -14,16 +14,28 @@ import com.example.galeria.R;
 public class SettingsScreen extends AppCompatActivity {
 
     String dataFilename = "data";
-    private int dirColumns, imgColumns, daysBeforeDeleting, matchingPercentage, comparingPercentage;
+    private int dirColumns, imgColumns, daysBeforeDeleting, matchingPercentage, comparingPercentage, themeUsed;
     private boolean rotateWithGestures, deleteAfterEmptying, moveToBinBeforeDeleting, perfectMatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        switch (themeUsed){
+            case 2:
+                //setTheme(R.style.GalleryThemeNight);
+                break;
+            case 3:
+                //setTheme(R.style.GalleryThemeCustom);
+                break;
+            default:
+                setTheme(R.style.GalleryThemeDay);
+                break;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_screen);
         setTitle(getResources().getString(R.string.settings));
 
         getData();
+        fillData();
     }
 
     public void openColorMenu(View view) {
@@ -109,16 +121,12 @@ public class SettingsScreen extends AppCompatActivity {
     }
 
     private void getData(){
-																//tutaj dopisz kod mający na celu pobranie informacji z pliku "data"
-		
-        fillData();
-    }
+        //tutaj wstaw kod potrzebny do zaladowania wartosci zainicjowanych w pliku starting_data_values.xml
+		//zauważ, że na ekranie ustawień nie będą potrzebne wartości ostatniego sortowania folderów i mediów
+	}
     private void saveData() {
-																//tutaj dopisz kod mający na celu zapisanie informacji do pliku "data"
-																
-																
-        editor.apply();
-        super.onBackPressed();
+        //tutaj wstaw kod potrzebny do zapisania każdej pobranej wartości
+		//zauważ, że ten ekran nie służy do edycji kolorów aplikacji, także tę wartość można pominąć
     }
 
 }

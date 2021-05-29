@@ -59,6 +59,13 @@ public class SimilarImagesScreen extends AppCompatActivity implements ItemClickI
         super.onResume();
         setView();
     }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        if (selected.size()>0) {
+            removeAllFromSelected();
+        }
+    }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu = add items to the action bar
@@ -82,6 +89,9 @@ public class SimilarImagesScreen extends AppCompatActivity implements ItemClickI
     }
     public void menuDeleteMedia(MenuItem item) {
         deleteMedia();
+    }
+    public void menuLaunchSettingsActivity(MenuItem item){
+        launchSettingsActivity();
     }
 
 
@@ -108,6 +118,11 @@ public class SimilarImagesScreen extends AppCompatActivity implements ItemClickI
         }
     }
 
+
+    //new screen
+    private void launchSettingsActivity(){
+        startActivity(new Intent(this, SettingsScreen.class));
+    }
 
     //data functions
     private void getData() {
