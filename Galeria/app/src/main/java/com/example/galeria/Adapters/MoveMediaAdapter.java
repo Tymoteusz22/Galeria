@@ -28,11 +28,13 @@ public class MoveMediaAdapter extends RecyclerView.Adapter<MoveMediaAdapter.View
 
     ArrayList<String> dirs, mediaToPass;
     Context context;
+    Dialog dialog;
 
-    public MoveMediaAdapter(Context context, ArrayList<String> dirs, ArrayList<String> mediaToPass) {
+    public MoveMediaAdapter(Context context, ArrayList<String> dirs, ArrayList<String> mediaToPass, Dialog dialog) {
         this.dirs = dirs;
         this.context = context;
         this.mediaToPass = mediaToPass;
+        this.dialog = dialog;
     }
 
     @NonNull
@@ -53,10 +55,10 @@ public class MoveMediaAdapter extends RecyclerView.Adapter<MoveMediaAdapter.View
             public void onClick(View v) {
                 for (String path : mediaToPass) {
                     File oldFile = new File(path);
-                    String newFile = dirs.get(position).substring(0, dirs.get(position).lastIndexOf("/")+1)+oldFile.getName();
+                    String newFile = dirs.get(position)+"/"+oldFile.getName();
                     oldFile.renameTo(new File(newFile));
                 }
-                ((Activity) context).finish();
+                dialog.dismiss();
             }
         });
     }

@@ -170,7 +170,6 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                             if (data!=null){
                                 Uri tree = data.getData();
                                 DocumentsContract.buildChildDocumentsUriUsingTree(tree,DocumentsContract.getTreeDocumentId(tree));
-
                             }
                         }
                     }
@@ -215,7 +214,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         launchSettingsActivity();
     }
     public void menuChangeDirName(MenuItem item) {
-        changeDirectoryName();
+        openDialogToChangeDirectoryName();
     }
     public void menuDeleteDirectories(MenuItem item) {
         deleteSelectedDirectories();
@@ -288,7 +287,7 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         menuItemSelectAll.setVisible(true);
     }
 
-    private void changeDirectoryName() {
+    private void openDialogToChangeDirectoryName() {
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.popup_rename);
 
@@ -299,6 +298,27 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         text.setText(dirName);
 
         dialog.show();
+    }
+    public void confirm(View view) {
+        EditText text = dialog.findViewById(R.id.rename);
+        String newName = text.getText().toString();
+
+        if (newName.length()>=5) {
+            File dir = new File(directories.get(selected.get(0)).getPath());
+            String oldPath = dir.getAbsolutePath();
+            oldPath = oldPath.substring(0,oldPath.lastIndexOf("/")+1);
+            dir.renameTo(new File(oldPath+newName));
+
+            directories.get(selected.get(0)).setName(newName);
+
+            directoryIconAdapter.notifyItemChanged(selected.get(0));
+        }
+        directories.get(selected.get(0)).setSelected(false);
+        selected.remove(0);
+        menuItemRename.setVisible(false);
+        menuItemDeleteButton.setVisible(false);
+        menuItemDeselectAll.setVisible(false);
+        dialog.dismiss();
     }
 
     private void deleteSelectedDirectories() {
@@ -323,25 +343,27 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
                     f.delete();
                 }
             }
-        }
-        if (file.listFiles()==null && deleteAfterEmptying){
-            file.delete();
+            if (file.listFiles().length==0 && deleteAfterEmptying){
+                file.delete();
+            }
         }
     }
 
 
     // new activities
     private void startAllMediaActivity() {
-        removeAllFromSelected();
-        ArrayList<String> paths = new ArrayList<>();
-        for (Directory d:directories){
-            paths.add(d.getPath());
+        if (directories.size() > 0) {
+            removeAllFromSelected();
+            ArrayList<String> paths = new ArrayList<>();
+            for (Directory d : directories) {
+                paths.add(d.getPath());
+            }
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("directoriesPaths", paths);
+            Intent i = new Intent(this, AllMediaScreen.class);
+            i.putExtras(bundle);
+            startActivity(i); //rozpocznij nowa aktywnosc (nowy Screen) przekazujac dalej foldery
         }
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList("directoriesPaths", paths);
-        Intent i = new Intent(this, AllMediaScreen.class);
-        i.putExtras(bundle);
-        startActivity(i); //rozpocznij nowa aktywnosc (nowy Screen) przekazujac dalej foldery
     }
     private void launchSettingsActivity() {
         removeAllFromSelected();
@@ -379,37 +401,13 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
         return false;
     }
     private boolean isMedia(String name) {
-        String type = URLConnection.guessContentTypeFromName(name);
-        if (type == null){
-            return false;
-        }
-        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
-            return true;
+        for (String s : extensions){
+            if (name.endsWith(s)){
+                return true;
+            }
         }
         return false;
     }
-
-    public void confirm(View view) {
-        EditText text = dialog.findViewById(R.id.rename);
-        String newName = text.getText().toString();
-
-        if (newName.length()>=5) {
-            File dir = new File(directories.get(selected.get(0)).getPath());
-            directories.get(selected.get(0)).setName(newName);
-            String oldPath = directories.get(selected.get(0)).getPath();
-            oldPath = oldPath.substring(0,oldPath.lastIndexOf("/")+1);
-            dir.renameTo(new File(oldPath+newName));
-
-            directories.get(selected.get(0)).setSelected(false);
-            directoryIconAdapter.notifyItemChanged(selected.get(0));
-            selected.remove(0);
-            menuItemRename.setVisible(false);
-            menuItemDeleteButton.setVisible(false);
-            menuItemDeselectAll.setVisible(false);
-        }
-        dialog.dismiss();
-    }
-
 
     //data functions
     private void getData() {
@@ -433,14 +431,16 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
     public void onItemClick(int position) {
         if (!directories.get(position).getSelected()){
             if (selected.size() == 0) {
-                ArrayList<String> allDirectoryPaths = new ArrayList<>();
-                for (Directory d : directories) {
-                    allDirectoryPaths.add(d.getPath());
+                if (directories.size()>0) {
+                    ArrayList<String> allDirectoryPaths = new ArrayList<>();
+                    for (Directory d : directories) {
+                        allDirectoryPaths.add(d.getPath());
+                    }
+                    Intent i = new Intent(getApplicationContext(), DirectoryContentScreen.class);
+                    i.putExtra("directoryPath", directories.get(position).getPath());
+                    i.putStringArrayListExtra("directories", allDirectoryPaths);
+                    startActivity(i);
                 }
-                Intent i = new Intent(getApplicationContext(), DirectoryContentScreen.class);
-                i.putExtra("directoryPath", directories.get(position).getPath());
-                i.putStringArrayListExtra("directories", allDirectoryPaths);
-                startActivity(i);
             } //start new activity
             if (selected.size()>1){
                 selected.add(position);
@@ -480,6 +480,9 @@ public class DirectoriesScreen extends AppCompatActivity implements ItemClickInt
             menuItemDeleteButton.setVisible(true);
             directoryIconAdapter.notifyItemChanged(position);
             menuItemDeselectAll.setVisible(true);
+            if (selected.size()==directories.size()){
+                menuItemSelectAll.setVisible(false);
+            }
         }
     }
 

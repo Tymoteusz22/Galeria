@@ -63,6 +63,7 @@ public class Media {
     }
     public void setName(String name){
         this.name = name;
+        this.path = path.substring(0,path.lastIndexOf("/")+1)+name;
     }
     public void setSelected(boolean value){
         this.selected = value;

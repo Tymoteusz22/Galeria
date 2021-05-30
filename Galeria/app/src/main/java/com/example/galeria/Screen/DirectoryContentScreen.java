@@ -1,6 +1,7 @@
 package com.example.galeria.Screen;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -41,6 +42,8 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
     ArrayList<String> directories = new ArrayList<>();
     ArrayList<String> mediaToPass = new ArrayList<>();
     private String directoryPath;
+
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".mp4",".avi",".gif",".tif",".tiff",".bmp",".webm",".flv",".amv",".m4p"};
 
     String dataFilename = "data";
     int imgColumns, dirColumns, lastMediaSortingMethod, matchingPercentage, comparingPercentage, themeUsed;
@@ -202,12 +205,10 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
         }
     }
     private boolean isMedia(String name) {
-        String type = URLConnection.guessContentTypeFromName(name);
-        if (type == null){
-            return false;
-        }
-        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
-            return true;
+        for (String s : extensions){
+            if (name.endsWith(s)){
+                return true;
+            }
         }
         return false;
     }
@@ -368,15 +369,27 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.popup_dir_to_choose);
         dialog.getWindow().setLayout(
-                (int) (0.75 * Resources.getSystem().getDisplayMetrics().widthPixels),
-                (int) (0.75 * Resources.getSystem().getDisplayMetrics().heightPixels));
+                (int) (0.8 * Resources.getSystem().getDisplayMetrics().widthPixels),
+                (int) (0.8 * Resources.getSystem().getDisplayMetrics().heightPixels));
         dialog.setTitle(getResources().getString(R.string.select_folder));
 
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView_popup);
         fillMediaToPass();
-        MoveMediaAdapter dirPopupAdapter = new MoveMediaAdapter(this, directories, mediaToPass);
+        MoveMediaAdapter dirPopupAdapter = new MoveMediaAdapter(this, directories, mediaToPass, dialog);
         recyclerView.setAdapter(dirPopupAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, dirColumns));
+
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Collections.sort(selected);
+                for (int i = selected.size()-1; i>=0; i--){
+                    media.remove(media.get(selected.get(i)));
+                    mediaIconAdapter.notifyItemRemoved(selected.get(i));
+                }
+                selected.clear();
+            }
+        });
 
         dialog.show();
     }
@@ -434,6 +447,9 @@ public class DirectoryContentScreen extends AppCompatActivity implements ItemCli
                 menuItemMove.setVisible(false);
                 menuItemDeleteButton.setVisible(false);
                 menuItemDeselectAll.setVisible(false);
+            }
+            if (selected.size()<media.size()){
+                menuItemSelectAll.setVisible(true);
             }
             mediaIconAdapter.notifyItemChanged(position);
         }

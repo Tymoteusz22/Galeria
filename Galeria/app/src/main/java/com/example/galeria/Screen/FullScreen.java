@@ -1,6 +1,7 @@
 package com.example.galeria.Screen;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -42,6 +43,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FullScreen extends AppCompatActivity implements OnMediaListener {
 
@@ -122,6 +124,12 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
     }
 
     private void setView() {
+        if (mediaPathIdx == -1) {
+            mediaPathIdx = 0;
+            if (media.get(mediaPathIdx) == null) {
+                this.onBackPressed();
+            }
+        }
         setTitle(media.get(mediaPathIdx).getName());
         int mediaType = media.get(mediaPathIdx).getType();
 
@@ -151,19 +159,15 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
     public void menuDisplayMediaInfo(MenuItem item) throws IOException {
         displayInfo();
     }
-
     public void menuRenameMedia(MenuItem item) {
         renameMedia();
     }
-
     public void menuMoveMedia(MenuItem item) {
         moveMedia();
     }
-
     public void menuDeleteMedia(MenuItem item) {
         deleteMedia();
     }
-
     public void menuLaunchSettingsActivity(MenuItem item) {
         launchSettingsActivity();
     }
@@ -266,17 +270,24 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.popup_dir_to_choose);
         dialog.getWindow().setLayout(
-                (int) (0.75 * Resources.getSystem().getDisplayMetrics().widthPixels),
-                (int) (0.75 * Resources.getSystem().getDisplayMetrics().heightPixels));
+                (int) (0.8 * Resources.getSystem().getDisplayMetrics().widthPixels),
+                (int) (0.8 * Resources.getSystem().getDisplayMetrics().heightPixels));
         dialog.setTitle(getResources().getString(R.string.select_folder));
 
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerView_popup);
         ArrayList<String> mediaToPass = new ArrayList<>();
         mediaToPass.add(media.get(mediaPathIdx).getPath());
-        MoveMediaAdapter dirPopupAdapter = new MoveMediaAdapter(this, directories, mediaToPass);
+        MoveMediaAdapter dirPopupAdapter = new MoveMediaAdapter(this, directories, mediaToPass, dialog);
         recyclerView.setAdapter(dirPopupAdapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, dirColumns));
 
-        recyclerView.setLayoutManager(new GridLayoutManager(this, dirColumns - 1));
+        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mediaPathIdx -= 1;
+                setView();
+            }
+        });
 
         dialog.show();
     }
@@ -287,9 +298,6 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
         media.remove(mediaPathIdx);
         if (mediaPathIdx == media.size()) {
             mediaPathIdx--;
-            if (mediaPathIdx == -1) {
-                super.onBackPressed();
-            }
         }
         setView();
     }
@@ -311,6 +319,7 @@ public class FullScreen extends AppCompatActivity implements OnMediaListener {
     private void getData(){
         String dataFilename = "data";
         SharedPreferences sharedPreferences = getSharedPreferences(dataFilename, MODE_PRIVATE);
+        dirColumns = sharedPreferences.getInt("dirColumns", getResources().getInteger(R.integer.dirColumns));
         themeUsed = sharedPreferences.getInt("themeUsed",getResources().getInteger(R.integer.themeUsed));
     }
 

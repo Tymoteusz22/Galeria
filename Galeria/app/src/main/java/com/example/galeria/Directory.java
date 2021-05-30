@@ -1,7 +1,6 @@
 package com.example.galeria;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.nio.file.Path;
 import java.util.Comparator;
 
@@ -10,6 +9,8 @@ public class Directory{
     private String path, name;
     private int size = 0;
     private boolean selected;
+
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".mp4",".avi",".gif",".tif",".tiff",".bmp",".webm",".flv",".amv",".m4p"};
 
     public Directory(Path p){
         path = p.toString();
@@ -28,12 +29,10 @@ public class Directory{
         }
     }
     private boolean isMedia(String fileName) {
-        String type = URLConnection.guessContentTypeFromName(fileName);
-        if (type == null){
-            return false;
-        }
-        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
-            return true;
+        for (String s : extensions){
+            if (fileName.endsWith(s)){
+                return true;
+            }
         }
         return false;
     }
@@ -47,7 +46,7 @@ public class Directory{
 
     public void setName(String name){
         this.name = name;
-        this.path = path.substring(0,path.lastIndexOf("/"))+name;
+        this.path = path.substring(0,path.lastIndexOf("/")+1)+name;
     }
     public void setSelected(boolean selected){
         this.selected = selected;

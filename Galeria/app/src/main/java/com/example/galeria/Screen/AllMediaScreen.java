@@ -45,6 +45,8 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
     ArrayList<Media> allMedia = new ArrayList<>();
     ArrayList<Integer> selected = new ArrayList<>();
 
+    private final String[] extensions = {".webp",".jfif",".jpg",".jpeg",".png",".mp4",".avi",".gif",".tif",".tiff",".bmp",".webm",".flv",".amv",".m4p"};
+
     String dataFilename = "data";
     int imgColumns, matchingPercentage, lastMediaSortingMethod, comparingPercentage, themeUsed;
     boolean perfectMatch;
@@ -225,12 +227,10 @@ public class AllMediaScreen extends AppCompatActivity implements ItemClickInterf
         }
     }
     private boolean isMedia(String name) {
-        String type = URLConnection.guessContentTypeFromName(name);
-        if (type == null){
-            return false;
-        }
-        if (type.startsWith("image") || type.startsWith("video") || type.startsWith("gif")){
-            return true;
+        for (String s : extensions){
+            if (name.endsWith(s)){
+                return true;
+            }
         }
         return false;
     }

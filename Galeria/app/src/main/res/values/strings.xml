@@ -89,7 +89,7 @@
     <string name="move">Move</string>
     <string name="all_media_deleted">All media deleted</string>
     <string name="all_media_deleted_dir_empty_but_wont_show">All media deleted but empty dir wont show anymore</string>
-    <string name="select_folder">Select folder to move files</string>
+    <string name="select_folder">Select folder</string>
 
     <!-- all media screen -->
     <string name="all_images">All images</string>
