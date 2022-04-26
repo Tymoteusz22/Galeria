@@ -1,5 +1,6 @@
 # Galeria
 School Project
+
 The main purpose of the project was to show the difference in loading times between different image_icon loading methods
 The project shows the difference between loading images: directly as icons (all visible icons show at once, without much code input); pre-calculated icon sizes (all visible icons show at once); using Glide library (icons show when they are ready).
 
