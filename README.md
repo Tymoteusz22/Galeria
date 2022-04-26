@@ -1,5 +1,5 @@
 # Galeria
-School Project
+### School Project
 
 
 The main purpose of the project was to show the difference in loading times between different image_icon loading methods.
